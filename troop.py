@@ -6,12 +6,13 @@ import xlwt
 import time
 
 #choose the source folder of the script and the destination folder of the excel file
-src = 'C:/Users/arauj/Desktop/troop scraper/troops.xls'
+src = 'C:/Users/rodry/OneDrive/Documentos/Projetos Python/troopscraper/TW_scraper_git/troops.xls'
 dst = './data/troops_count.xls'
 
 workbook = xlwt.Workbook()
 sheet = workbook.add_sheet("Troop Counter", cell_overwrite_ok=False) 
 style = xlwt.easyxf('font: bold 1, color blue;')
+bold = xlwt.easyxf('font: bold 1')
 
 # ask for tribal wars credentials
 user = input ("Enter user :") 
@@ -43,6 +44,7 @@ driver.find_element_by_xpath('//a[2]/span').click()
 
 #playersID array
 arr = [848937173 , 848941819, 848941982, 848945478, 848932450,848942150,848941598,848941934,848941896,848943143,10081546,11586147]
+arr_nomes = ['caracortada', 'Claudiac8', 'F.T.Freitas', 'Forcedarmy', 'Guts', 'Jarbas', 'julzz', 'LaTila', 'Lord Shadow', 'Meiguinho', 'rodrygors', 'wendig0xd']
 #types of units
 tropas = ['lanças','espadas','vikings','espias','cl','cp','arietes','catas','nobres','comandos','a chegar']
 r = 0
@@ -57,6 +59,7 @@ for i in range(len(arr)):
     c = 1
     driver.get('https://enc4.tribalwars.net/game.php?screen=ally&mode=members_troops&player_id=%s&village=3680' % (arr[i]))
     troops_table = driver.find_elements_by_css_selector('.w100 td')
+    info = sheet.write(r, 0, arr_nomes[i], bold)
     x = r
     for row in troops_table:
         if r - x == 12: 
@@ -64,7 +67,8 @@ for i in range(len(arr)):
             r = x
         if 0 < r - x < 13:
             troops[(r-x)-1] += int(row.text)
-        info = sheet.write(r,c, row.text)
+        if r-x == 0: info = sheet.write(r,c, row.text, bold)
+        else: info = sheet.write(r,c, row.text)
         r += 1
     r = x + 1
     for k in troops:
@@ -76,9 +80,11 @@ for i in range(len(arr)):
         kk += 1
     troops.clear()
     r = x + 14
+info = sheet.write(2,0,'Total', bold)
+info = sheet.write(3,0,'de tropas', bold)
 c = 1
 for t_total in troops_final:
-    info = sheet.write(2,c,tropas[c-1],style)
+    info = sheet.write(2,c,tropas[c-1],bold)
     info = sheet.write(3,c,t_total)
     c += 1
 workbook.save("troops.xls")
