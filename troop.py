@@ -52,14 +52,14 @@ c = 0
 x = 0
 troops_final=[0] * 11
 info = sheet.write(r,c,'Tropas da Tribo',style)
-r = 5
+r = 7
 #for each player check the troops
 for i in range(len(arr)):
     troops=[0] * 11
-    c = 1
+    c = 2
     driver.get('https://enc4.tribalwars.net/game.php?screen=ally&mode=members_troops&player_id=%s&village=3680' % (arr[i]))
     troops_table = driver.find_elements_by_css_selector('.w100 td')
-    info = sheet.write(r, 0, arr_nomes[i], bold)
+    info = sheet.write(r-1, 0, arr_nomes[i], bold)
     x = r
     for row in troops_table:
         if r - x == 12: 
@@ -67,19 +67,22 @@ for i in range(len(arr)):
             r = x
         if 0 < r - x < 13:
             troops[(r-x)-1] += int(row.text)
-        if r-x == 0: info = sheet.write(r,c, row.text, bold)
-        else: info = sheet.write(r,c, row.text)
+        if r-x != 0: info = sheet.write(r,c, row.text)
+        else: info = sheet.write(r,c, row.text, bold)
         r += 1
-    r = x + 1
-    for k in troops:
-        info = sheet.write(r,0,k)
+    
+    r = x
+    info = sheet.write(r,1,'Total', bold)
+    for k in range (len(troops)):
         r += 1
+        info = sheet.write(r,1,troops[k])
+        info = sheet.write(r, 0, tropas[k])
     kk = 0
     for k in troops:
         troops_final[kk] += k
         kk += 1
     troops.clear()
-    r = x + 14
+    r = x + 15
 info = sheet.write(2,0,'Total', bold)
 info = sheet.write(3,0,'de tropas', bold)
 c = 1
