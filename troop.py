@@ -5,6 +5,15 @@ import shutil
 import xlwt
 import time
 
+class Player:
+    id = 0
+    name = ''
+    p_troops=[0] * 11
+
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+
 #choose the source folder of the script and the destination folder of the excel file
 src = 'C:/Users/rodry/OneDrive/Documentos/Projetos Python/troopscraper/TW_scraper_git/troops.xls'
 dst = './data/troops_count.xls'
@@ -45,8 +54,12 @@ driver.find_element_by_xpath('//a[2]/span').click()
 #playersID array
 arr = [848937173 , 848941819, 848941982, 848945478, 848932450,848942150,848941598,848941934,848941896,848943143,10081546,11586147]
 arr_nomes = ['caracortada', 'Claudiac8', 'F.T.Freitas', 'Forcedarmy', 'Guts', 'Jarbas', 'julzz', 'LaTila', 'Lord Shadow', 'Meiguinho', 'rodrygors', 'wendig0xd']
+arr_players = []
+for i in range(len(arr)):
+    p = Player(arr[i], arr_nomes[i])
+    arr_players.append(p)
 #types of units
-tropas = ['lanças','espadas','vikings','espias','cl','cp','arietes','catas','nobres','comandos','a chegar']
+troops_names = ['lanças','espadas','vikings','espias','cl','cp','arietes','catas','nobres','comandos','a chegar']
 r = 0
 c = 0
 x = 0
@@ -54,12 +67,12 @@ troops_final=[0] * 11
 info = sheet.write(r,c,'Tropas da Tribo',style)
 r = 7
 #for each player check the troops
-for i in range(len(arr)):
+for i in range(len(arr_players)):
     troops=[0] * 11
     c = 2
-    driver.get('https://enc4.tribalwars.net/game.php?screen=ally&mode=members_troops&player_id=%s&village=3680' % (arr[i]))
+    driver.get('https://enc4.tribalwars.net/game.php?screen=ally&mode=members_troops&player_id=%s&village=3680' % (arr_players[i].id))
     troops_table = driver.find_elements_by_css_selector('.w100 td')
-    info = sheet.write(r-1, 0, arr_nomes[i], bold)
+    info = sheet.write(r-1, 0, arr_players[i].name, bold)
     x = r
     for row in troops_table:
         if r - x == 12: 
@@ -68,7 +81,7 @@ for i in range(len(arr)):
         if 0 < r - x < 13:
             troops[(r-x)-1] += int(row.text)
         if r-x != 0: info = sheet.write(r,c, row.text)
-        else: info = sheet.write(r,c, row.text, bold)
+        else: info = sheet.write(r,c, row.text[len(row.text)-12:len(row.text)-5], bold)
         r += 1
     
     r = x
@@ -76,7 +89,7 @@ for i in range(len(arr)):
     for k in range (len(troops)):
         r += 1
         info = sheet.write(r,1,troops[k])
-        info = sheet.write(r, 0, tropas[k])
+        info = sheet.write(r, 0, troops_names[k])
     kk = 0
     for k in troops:
         troops_final[kk] += k
@@ -87,7 +100,7 @@ info = sheet.write(2,0,'Total', bold)
 info = sheet.write(3,0,'de tropas', bold)
 c = 1
 for t_total in troops_final:
-    info = sheet.write(2,c,tropas[c-1],bold)
+    info = sheet.write(2,c,troops_names[c-1],bold)
     info = sheet.write(3,c,t_total)
     c += 1
 workbook.save("troops.xls")
