@@ -36,7 +36,7 @@ driver = webdriver.Chrome(executable_path=r'./chromedriver.exe')
 extra_driver = webdriver.Chrome(executable_path=r'./chromedriver.exe')
 
 #hide browser
-#driver.set_window_position(-10000,0)
+driver.set_window_position(-10000,0)
 
 #find login elements
 driver.get('https://enc4.tribalwars.net')
