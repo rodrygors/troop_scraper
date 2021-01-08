@@ -17,7 +17,7 @@ class Player:
     def __str__(self): return ('Nome: ' +self.name+ '\nID: ' +self.id)
 
 #choose the source folder of the script and the destination folder of the excel file
-src = 'C:/Users/rodry/OneDrive/Documentos/Projetos Python/troopscraper/TW_scraper_git/troops.xls'
+src = './troops.xls'
 dst = './data/troops_count.xls'
 
 #excel stuff
@@ -36,7 +36,7 @@ driver = webdriver.Chrome(executable_path=r'./chromedriver.exe')
 extra_driver = webdriver.Chrome(executable_path=r'./chromedriver.exe')
 
 #hide browser
-driver.set_window_position(-10000,0)
+driver.set_window_position(-10000,-10000)
 
 #find login elements
 driver.get('https://enc4.tribalwars.net')
